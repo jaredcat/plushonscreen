@@ -1,0 +1,87 @@
+name: 🐍 Submit a Sighting
+description: Spotted an IKEA plush in a movie, show, or video? Tell us about it!
+title: '[Sighting]: '
+labels: ['sighting']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for spotting a plush in the wild! Fill out what you can — the more detail the better.
+        **A screenshot is the most valuable thing you can include.**
+  - type: input
+    id: title
+    attributes:
+      label: Title
+      description: Name of the movie / show / video.
+      placeholder: e.g. Shrek
+    validations:
+      required: true
+  - type: input
+    id: year
+    attributes:
+      label: Year
+      placeholder: e.g. 2001
+    validations:
+      required: true
+  - type: dropdown
+    id: mediaType
+    attributes:
+      label: Type
+      options:
+        - movie
+        - tv
+        - short
+        - game
+        - other
+    validations:
+      required: true
+  - type: dropdown
+    id: plush
+    attributes:
+      label: Which plush?
+      description: If it's not listed, pick "other / not listed" and describe it below.
+      options:
+        - Djungelorm (the green snake)
+        - other / not listed
+    validations:
+      required: true
+  - type: input
+    id: timestamp
+    attributes:
+      label: Timestamp
+      description: Roughly where in the runtime does it appear?
+      placeholder: e.g. 1:04:32
+  - type: textarea
+    id: sceneDescription
+    attributes:
+      label: Scene description
+      description: What's happening? Who has the plush? How visible is it?
+      placeholder: In the background of the living room scene, sitting on the couch...
+    validations:
+      required: true
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: Screenshot
+      description: Drag and drop an image here, or paste a link. This is the best part!
+  - type: input
+    id: clipUrl
+    attributes:
+      label: Clip link (optional)
+      placeholder: YouTube link to the moment, if one exists
+  - type: dropdown
+    id: confidence
+    attributes:
+      label: How sure are you?
+      options:
+        - 'likely — pretty confident'
+        - 'verified — no doubt, it is definitely the plush'
+        - 'disputed — could be something similar'
+    validations:
+      required: true
+  - type: input
+    id: submittedBy
+    attributes:
+      label: Credit
+      description: Your GitHub username, if you'd like a credit on the entry.
+      placeholder: your-username

@@ -42,6 +42,7 @@ body:
       description: If it's not listed, pick "other / not listed" and describe it below.
       options:
         - Djungelorm (the green snake)
+        - Blåhaj (the blue shark)
         - other / not listed
     validations:
       required: true

@@ -1,1 +1,9 @@
+#!/bin/sh
+staged=$(git diff --cached --name-only --diff-filter=ACMR)
+
 npx biome check --staged --write --no-errors-on-unmatched --files-ignore-unknown=true
+
+# Biome --write updates the working tree but not the index; re-stage so fixes land in the commit.
+if [ -n "$staged" ]; then
+  echo "$staged" | xargs git add
+fi

@@ -19,6 +19,15 @@ export const plushes: Plush[] = [
     blurb:
       "IKEA's beloved green snake plush. Nearly five feet of cuddly serpent that keeps slithering its way onto the big screen.",
   },
+  {
+    id: 'blahaj',
+    name: 'Blåhaj',
+    fullName: 'IKEA Blåhaj Shark',
+    emoji: '🦈',
+    color: '#6CA7B5',
+    blurb:
+      "IKEA's beloved blue shark plush. Big and safe to have by your side if you want to discover the world below the surface of the ocean. The blue shark can swim very far, dive really deep and hear noises from almost 250 meters away.",
+  },
 ];
 
 export const plushById = (id: string): Plush | undefined =>

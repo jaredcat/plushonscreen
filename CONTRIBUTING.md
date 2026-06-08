@@ -52,7 +52,13 @@ npm run lint:fix  # auto-fix safe issues
 npm run format    # format all files
 ```
 
-Git hooks run Biome on staged files before each commit. You can skip hooks in a pinch with `git commit --no-verify`, but CI will still enforce the checks.
+Git hooks run Biome on staged files and lightly optimize staged sighting screenshots (resize to a 1920px max edge, high-quality compression) before each commit. JPEG is preferred for photo stills — PNG is fine but compresses less. You can skip hooks in a pinch with `git commit --no-verify`, but CI will still enforce the checks.
+
+To optimize images manually:
+
+```sh
+npm run optimize-images -- path/to/image.png
+```
 
 ## Fixing Biome failures
 

@@ -1,0 +1,39 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { plushes } from '../plushes';
+
+const all = await getCollection('sightings');
+const countFor = (id: string) => all.filter((s) => s.data.plush === id).length;
+---
+
+<Base title="The Cast" description="The IKEA plushes we track sightings for.">
+  <h1 style="font-size:clamp(2rem,6vw,3.5rem);margin-top:2rem">The Cast</h1>
+  <p style="color:var(--paper-dim);max-width:55ch;margin-top:0.5rem">
+    The plushes we're keeping an eye out for. Spotted one we don't track yet?
+    <a href="/about">Let us know.</a>
+  </p>
+
+  <div class="detail-grid" style="margin-top:2rem">
+    {plushes.map((p) => (
+        <div
+          class="detail-row"
+          style={`grid-template-columns:64px 1fr auto;align-items:center;border-color:${p.color}33`}
+        >
+          <div style={`font-size:2.5rem;text-align:center`}>{p.emoji}</div>
+          <div>
+            <div style={`font-family:var(--display);font-size:1.4rem;font-weight:600;color:${p.color}`}>
+              {p.name}
+            </div>
+            <div style="color:var(--paper-dim);font-size:0.85rem">{p.fullName}</div>
+            <p style="margin-top:0.4rem;font-size:0.9rem">{p.blurb}</p>
+          </div>
+          <div style="text-align:right">
+            <a href={`/sightings`} style={`color:${p.color};font-weight:700`}>
+              {countFor(p.id)} sighting{countFor(p.id) === 1 ? '' : 's'}
+            </a>
+          </div>
+        </div>
+      ))}
+  </div>
+</Base>

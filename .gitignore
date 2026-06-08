@@ -1,0 +1,13 @@
+dist/
+node_modules/
+.astro/
+.DS_Store
+*.log
+.env
+.env.production
+
+# wrangler
+.wrangler
+.dev.vars*
+!.dev.vars.example
+!.env.example

@@ -8,7 +8,7 @@ Every sighting is a Markdown file under `src/content/sightings/<plush-id>/`, wit
 
 ## Adding a sighting
 
-**As a PR:** add a `.md` file under `src/content/sightings/<plush-id>/` and its screenshot in that folder's `images/` directory. Copy `djungelorm/example-movie-2026.md` as a starting point. Open a PR.
+**As a PR:** add a `.md` file under `src/content/sightings/<plush-id>/` using the naming convention (`movie-saw-2004.md`, `tv-show-name-s02e01.md`, etc.). See [CONTRIBUTING.md](CONTRIBUTING.md). Copy a template from `djungelorm/example-movie-2026.md` or `example-tv-show-s01e01.md`.
 
 **As a form:** non-technical contributors use the [sighting issue form](../../issues/new?template=sighting.yml). Maintainers convert accepted issues into entries.
 

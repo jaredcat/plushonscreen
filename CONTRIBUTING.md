@@ -6,10 +6,13 @@ Thanks for helping document IKEA plush sightings on screen!
 
 ### Submit a sighting (PR)
 
-1. Copy [`src/content/sightings/djungelorm/example-movie-2026.md`](src/content/sightings/djungelorm/example-movie-2026.md) into the folder for your plush (e.g. `src/content/sightings/djungelorm/`) and **rename it** (files named `example-*` are templates and are not published).
-2. Add your screenshot to that plush folder's `images/` directory (e.g. `src/content/sightings/djungelorm/images/`).
-3. Set `plush` in frontmatter to match the folder name and a valid id from [`src/plushes.ts`](src/plushes.ts).
-4. Run checks locally (see below), then open a pull request.
+1. Copy a template from the plush folder:
+   - Movie / short / game / other: [`example-movie-2026.md`](src/content/sightings/djungelorm/example-movie-2026.md)
+   - TV: [`example-tv-show-s01e01.md`](src/content/sightings/djungelorm/example-tv-show-s01e01.md)
+2. **Rename** the file to match the [naming convention](#file-naming) below (`example-*` files are not published).
+3. Add your screenshot to that plush folder's `images/` directory (e.g. `src/content/sightings/djungelorm/images/`).
+4. Set `plush` in frontmatter to match the folder name and a valid id from [`src/plushes.ts`](src/plushes.ts).
+5. Run checks locally (see below), then open a pull request.
 
 ### Submit a sighting (issue form)
 
@@ -70,7 +73,45 @@ If Biome reports issues it cannot auto-fix, read the error message and adjust th
 
 ## Content schema
 
-Every sighting is validated against the Zod schema in [`src/content.config.ts`](src/content.config.ts). Required fields: `title`, `year`, `mediaType`, `plush`, `sceneDescription`. A malformed entry fails `npm run build`.
+Every sighting is validated against the Zod schema in [`src/content.config.ts`](src/content.config.ts). Required fields for all entries: `title`, `mediaType`, `plush`.
+
+Complete entries (`confidence: verified`, `likely`, or `disputed`) also require `year` and `sceneDescription`. TV entries require `season` and `episode` (`episodeTitle` is optional). A screenshot is strongly recommended.
+
+**Unverified** entries (`confidence: unverified`) are for work-in-progress sightings. You can omit `year`, `sceneDescription`, season/episode, and screenshot while you gather details. TV filenames can omit the `-s{season}e{episode}` suffix until those are known.
+
+When details are confirmed, fill in the missing fields, update the filename if needed, and change `confidence` to `likely` or `verified`.
+
+### Confidence levels
+
+| Value | Meaning |
+|-------|---------|
+| `verified` | Definitely the plush — no doubt |
+| `likely` | Pretty confident (default) |
+| `disputed` | Could be something similar |
+| `unverified` | Reported but missing key details — relaxed validation |
+
+### File naming
+
+Sightings live under `src/content/sightings/<plush-id>/`. The **filename must start with the media type** and use lowercase slugs (letters, numbers, hyphens):
+
+| Type | Pattern | Example |
+|------|---------|---------|
+| Movie | `movie-{title-slug}.md` | `movie-saw-2004.md` |
+| TV | `tv-{show-slug}-s{SS}e{EE}.md` | `tv-suite-life-of-zack-and-cody-s02e01.md` |
+| TV (unverified, S/E unknown) | `tv-{show-slug}.md` | `tv-all-that.md` |
+| Short | `short-{title-slug}.md` | `short-big-buck-bunny.md` |
+| Game | `game-{title-slug}.md` | `game-minecraft.md` |
+| Other | `other-{title-slug}.md` | `other-viral-tiktok.md` |
+
+Rules enforced by `npm run check`:
+
+- The filename prefix must match `mediaType` in frontmatter.
+- TV filenames must include `-s{season}e{episode}` with zero-padded numbers (e.g. `s02e01`) when season/episode are set — or when confidence is not `unverified`.
+- `season`, `episode`, and optional `episodeTitle` are only allowed when `mediaType` is `tv`.
+
+Logic lives in [`src/lib/sighting-naming.ts`](src/lib/sighting-naming.ts).
+
+Templates (`example-*.md`) are excluded from the site and may ignore the naming rules until copied and renamed.
 
 ### Contributor credit (`submittedBy`)
 

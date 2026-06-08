@@ -66,6 +66,18 @@ If Biome reports issues it cannot auto-fix, read the error message and adjust th
 
 Every sighting is validated against the Zod schema in [`src/content.config.ts`](src/content.config.ts). Required fields: `title`, `year`, `mediaType`, `plush`, `sceneDescription`. A malformed entry fails `npm run build`.
 
+### Contributor credit (`submittedBy`)
+
+Optional credit for who spotted the plush. Use a platform + username — the site builds profile links from fixed templates (no raw URLs in frontmatter):
+
+```yaml
+submittedBy:
+  platform: youtube   # github, instagram, tiktok, bluesky, youtube, twitch, reddit, pinterest, threads, or none
+  username: your-handle
+```
+
+Pick `none` for a display name with no link.
+
 ## CI
 
 Pull requests run [`.github/workflows/ci.yml`](.github/workflows/ci.yml): Biome, `astro check`, sighting validation, and production build.

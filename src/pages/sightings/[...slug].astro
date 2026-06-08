@@ -1,6 +1,7 @@
 ---
 import { getImage, Image } from 'astro:assets';
 import { getCollection, render } from 'astro:content';
+import ContributorCredit from '../../components/ContributorCredit.astro';
 import Base from '../../layouts/Base.astro';
 import {
   sightingDescription,
@@ -61,7 +62,7 @@ const jsonLd = sightingJsonLd({
   url: canonicalURL,
   image: ogImage ? new URL(ogImage, Astro.site).href : undefined,
   datePublished: d.addedDate?.toISOString(),
-  author: d.submittedBy,
+  author: d.submittedBy?.username,
 });
 
 const typeLabel: Record<string, string> = {
@@ -136,7 +137,7 @@ const typeLabel: Record<string, string> = {
     {d.submittedBy && (
       <div class="detail-row">
         <dt>Spotted by</dt>
-        <dd><a href={`https://github.com/${d.submittedBy}`} rel="noopener">@{d.submittedBy}</a></dd>
+        <dd><ContributorCredit submittedBy={d.submittedBy} showPlatform /></dd>
       </div>
     )}
   </dl>

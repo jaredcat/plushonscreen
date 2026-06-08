@@ -9,7 +9,9 @@ sceneDescription: >
   In the background of the living room scene, the green snake is draped over the
   back of the couch. A child picks it up and carries it out of frame around the
   0:42 mark. Clearly the IKEA Djungelorm — the distinctive forked tongue is visible.
-submittedBy: YOUR_USERNAME
+submittedBy:
+  platform: github
+  username: YOUR_USERNAME
 imdb: 'tt0000000'
 clipUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
 screenshot: ./images/example-movie-2026.jpg

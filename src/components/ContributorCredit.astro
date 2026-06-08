@@ -1,0 +1,24 @@
+---
+import type { SubmittedBy } from '../lib/social';
+import { contributorDisplay } from '../lib/social';
+
+interface Props {
+  submittedBy: SubmittedBy;
+  showPlatform?: boolean;
+}
+
+const { submittedBy, showPlatform = false } = Astro.props;
+const { label, url, platform } = contributorDisplay(submittedBy);
+---
+
+{url ? (
+  <a href={url} rel="noopener noreferrer">
+    {label}
+    {showPlatform && <span class="contributor-platform"> ({platform})</span>}
+  </a>
+) : (
+  <span>
+    {label}
+    {showPlatform && <span class="contributor-platform"> ({platform})</span>}
+  </span>
+)}

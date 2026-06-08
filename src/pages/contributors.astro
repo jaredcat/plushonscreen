@@ -1,0 +1,70 @@
+---
+import { getCollection } from 'astro:content';
+import ContributorCredit from '../components/ContributorCredit.astro';
+import Base from '../layouts/Base.astro';
+import { contributorKey, type SubmittedBy } from '../lib/social';
+
+const all = await getCollection('sightings');
+
+const counts = new Map<string, { submittedBy: SubmittedBy; count: number }>();
+
+for (const sighting of all) {
+  const submittedBy = sighting.data.submittedBy;
+  if (!submittedBy) continue;
+
+  const key = contributorKey(submittedBy);
+  const existing = counts.get(key);
+  if (existing) {
+    existing.count += 1;
+  } else {
+    counts.set(key, { submittedBy, count: 1 });
+  }
+}
+
+const contributors = [...counts.values()].sort(
+  (a, b) =>
+    b.count - a.count ||
+    a.submittedBy.username.localeCompare(b.submittedBy.username),
+);
+
+const totalCredited = contributors.reduce((sum, c) => sum + c.count, 0);
+---
+
+<Base
+  title="Contributors"
+  description="Everyone who has helped document plush sightings on PlushOnScreen."
+>
+  <h1 style="font-size:clamp(2rem,6vw,3.5rem);margin-top:2rem">Contributors</h1>
+  <p style="color:var(--paper-dim);max-width:55ch;margin-top:0.5rem">
+    The community members who've spotted plushes and shared them here.
+    {contributors.length > 0 && (
+      <>
+        {' '}
+        <span class="count">{totalCredited}</span> credited sighting
+        {totalCredited === 1 ? '' : 's'} from{' '}
+        <span class="count">{contributors.length}</span> contributor
+        {contributors.length === 1 ? '' : 's'}.
+      </>
+    )}
+  </p>
+
+  {contributors.length === 0 ? (
+    <p style="margin-top:2rem;color:var(--paper-dim)">
+      No credited sightings yet — <a href="/about">submit one</a> and add your
+      name!
+    </p>
+  ) : (
+    <div class="contributor-list" style="margin-top:2rem">
+      {contributors.map(({ submittedBy, count }) => (
+        <div class="contributor-row">
+          <div class="contributor-name">
+            <ContributorCredit submittedBy={submittedBy} showPlatform />
+          </div>
+          <div class="contributor-count">
+            {count} sighting{count === 1 ? '' : 's'}
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
+</Base>

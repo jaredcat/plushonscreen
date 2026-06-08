@@ -1,11 +1,18 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import {
+  isValidSubmittedBy,
+  normalizeUsername,
+  SOCIAL_PLATFORMS,
+  type SocialPlatform,
+} from '../src/lib/social.ts';
 import { plushes } from '../src/plushes.ts';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const sightingsDir = join(root, 'src/content/sightings');
 const plushIds = new Set(plushes.map((p) => p.id));
+const validPlatforms = new Set<string>(SOCIAL_PLATFORMS);
 
 const errors: string[] = [];
 const warnings: string[] = [];
@@ -25,6 +32,51 @@ function parseFrontmatter(content: string): Record<string, string> {
   }
 
   return fields;
+}
+
+interface ParsedSubmittedBy {
+  platform: string;
+  username: string;
+}
+
+function parseSubmittedBy(content: string): ParsedSubmittedBy | null {
+  const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+  if (!match) return null;
+
+  const lines = match[1].split('\n');
+  let platform: string | null = null;
+  let username: string | null = null;
+  let inSubmittedBy = false;
+
+  for (const line of lines) {
+    if (line.match(/^submittedBy:\s*$/)) {
+      inSubmittedBy = true;
+      continue;
+    }
+
+    if (inSubmittedBy) {
+      const platformMatch = line.match(/^\s+platform:\s*(.+)$/);
+      const usernameMatch = line.match(/^\s+username:\s*(.+)$/);
+      if (platformMatch) {
+        platform = platformMatch[1].trim().replace(/^['"]|['"]$/g, '');
+        continue;
+      }
+      if (usernameMatch) {
+        username = usernameMatch[1].trim().replace(/^['"]|['"]$/g, '');
+        continue;
+      }
+      if (line.match(/^\S/)) {
+        break;
+      }
+    }
+  }
+
+  if (!platform && !username) return null;
+  if (!platform || !username) {
+    return { platform: platform ?? '', username: username ?? '' };
+  }
+
+  return { platform, username };
 }
 
 function collectMarkdownFiles(dir: string): string[] {
@@ -85,10 +137,28 @@ for (const filePath of markdownFiles) {
     }
   }
 
-  if (frontmatter.submittedBy === 'YOUR_USERNAME') {
-    warnings.push(
-      `${relativePath}: submittedBy is still the placeholder YOUR_USERNAME`,
-    );
+  const submittedBy = parseSubmittedBy(content);
+  if (submittedBy) {
+    if (!validPlatforms.has(submittedBy.platform)) {
+      errors.push(
+        `${relativePath}: submittedBy.platform "${submittedBy.platform}" is invalid (valid: ${SOCIAL_PLATFORMS.join(', ')})`,
+      );
+    } else if (!submittedBy.username) {
+      errors.push(`${relativePath}: submittedBy.username is required`);
+    } else if (
+      !isValidSubmittedBy({
+        platform: submittedBy.platform as SocialPlatform,
+        username: normalizeUsername(submittedBy.username),
+      })
+    ) {
+      errors.push(
+        `${relativePath}: submittedBy.username "${submittedBy.username}" is not a valid handle for platform "${submittedBy.platform}"`,
+      );
+    } else if (submittedBy.username === 'YOUR_USERNAME') {
+      warnings.push(
+        `${relativePath}: submittedBy.username is still the placeholder YOUR_USERNAME`,
+      );
+    }
   }
 }
 

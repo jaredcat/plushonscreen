@@ -1,0 +1,66 @@
+---
+import Base from '../layouts/Base.astro';
+
+const repo = 'jaredcat/plushonscreen';
+---
+
+<Base
+  title="About"
+  description="What PlushOnScreen is and how to contribute a sighting."
+>
+  <h1 style="font-size:clamp(2rem,6vw,3.5rem);margin-top:2rem">About</h1>
+
+  <div class="prose" style="max-width:60ch;margin-top:1rem">
+    <p>
+      <strong>PlushOnScreen</strong>
+      is a community-curated database tracking the appearances of IKEA plush
+      toys in movies, TV, music videos, and more. It started with one absurdly
+      photogenic green snake — the <a href="/plushes">Djungelorm</a> — and grew
+      from there.
+    </p>
+    <p>
+      It's a fan project. Not affiliated with IKEA in any way. Just people who
+      keep noticing the same plushie show up in the background of things and
+      can't let it go.
+    </p>
+  </div>
+
+  <h2 class="section-label">Spotted one? Submit it</h2>
+  <div class="prose" style="max-width:60ch">
+    <p>
+      There are two ways to add a sighting, depending on how comfortable you are
+      with GitHub:
+    </p>
+    <p>
+      <strong>1. The easy way — fill out a form.</strong>
+      No coding needed. Just answer a few questions and we'll handle the rest.
+    </p>
+    <p style="margin:1.25rem 0">
+      <a
+        class="btn"
+        href={`https://github.com/${repo}/issues/new?template=sighting.yml`}
+      >
+        Submit a sighting →
+      </a>
+    </p>
+    <p>
+      <strong>2. The direct way — open a pull request.</strong>
+      If you know your way around git, add a markdown file under
+      <code>src/content/sightings/&lt;plush-id&gt;/</code>
+      with the screenshot in that folder's <code>images/</code> directory, and
+      open a PR. The schema in
+      <code>src/content.config.ts</code>
+      shows every field. This gets your sighting live the fastest.
+    </p>
+  </div>
+
+  <h2 class="section-label">What makes a good entry</h2>
+  <div class="prose" style="max-width:60ch">
+    <p>
+      A <em>screenshot</em> is the single most important thing — this is a
+      visual catalogue, so a clear still of the plush on screen is gold. Beyond
+      that: the title and year, roughly where in the runtime it shows up (a
+      timestamp), and a sentence describing the scene. A clip link is a bonus.
+    </p>
+  </div>
+</Base>

@@ -1,0 +1,138 @@
+---
+import { getCollection } from 'astro:content';
+import SightingCard from '../../components/SightingCard.astro';
+import Base from '../../layouts/Base.astro';
+import { plushes } from '../../plushes';
+
+const all = await getCollection('sightings');
+const sorted = all.sort((a, b) => b.data.year - a.data.year);
+
+// Build filter option lists from the actual data so they never drift out of sync.
+const types = [...new Set(all.map((s) => s.data.mediaType))];
+const usedPlushes = plushes.filter((p) =>
+  all.some((s) => s.data.plush === p.id),
+);
+
+const typeLabel: Record<string, string> = {
+  movie: 'Movies',
+  tv: 'TV',
+  short: 'Shorts',
+  game: 'Games',
+  other: 'Other',
+};
+---
+
+<Base
+  title="Sightings"
+  description="Every catalogued IKEA plush sighting in film and TV."
+>
+  <h1 style="font-size:clamp(2rem,6vw,3.5rem);margin-top:2rem">Sightings</h1>
+
+  <div class="filters" role="group" aria-label="Filter sightings">
+    <span
+      style="color:var(--paper-dim);font-size:0.78rem;text-transform:uppercase;letter-spacing:0.05em"
+    >
+      Plush:
+    </span>
+    <button
+      type="button"
+      class="filter-btn"
+      data-filter="plush"
+      data-value="all"
+      aria-pressed="true"
+    >
+      All
+    </button>
+    {usedPlushes.map((p) => (
+        <button type="button" class="filter-btn" data-filter="plush" data-value={p.id} aria-pressed="false">
+          {p.emoji} {p.name}
+        </button>
+      ))}
+  </div>
+
+  <div class="filters" role="group" aria-label="Filter by type">
+    <span
+      style="color:var(--paper-dim);font-size:0.78rem;text-transform:uppercase;letter-spacing:0.05em"
+    >
+      Type:
+    </span>
+    <button
+      type="button"
+      class="filter-btn"
+      data-filter="type"
+      data-value="all"
+      aria-pressed="true"
+    >
+      All
+    </button>
+    {types.map((t) => (
+        <button type="button" class="filter-btn" data-filter="type" data-value={t} aria-pressed="false">
+          {typeLabel[t] ?? t}
+        </button>
+      ))}
+  </div>
+
+  {all.length === 0 ? (
+      <p style="color:var(--paper-dim);margin-top:2rem">
+        No sightings catalogued yet. <a href="/about">Be the first to submit one →</a>
+      </p>
+    ) : (
+      <div class="grid" id="sighting-grid">
+        {sorted.map((s) => (
+          <SightingCard
+            slug={s.id}
+            title={s.data.title}
+            year={s.data.year}
+            mediaType={s.data.mediaType}
+            plush={s.data.plush}
+            confidence={s.data.confidence}
+            screenshot={s.data.screenshot}
+          />
+        ))}
+      </div>
+    )}
+
+  <p id="empty-msg" style="display:none;color:var(--paper-dim);margin-top:2rem">
+    No sightings match those filters.
+  </p>
+</Base>
+
+<script>
+// Dependency-free filtering. Two independent filter groups (plush, type);
+// a card shows only if it matches the active value in BOTH groups.
+const active = { plush: 'all', type: 'all' };
+
+const grid = document.getElementById('sighting-grid');
+const emptyMsg = document.getElementById('empty-msg');
+const buttons = document.querySelectorAll<HTMLButtonElement>('.filter-btn');
+
+function apply() {
+  if (!grid) return;
+  let visible = 0;
+  grid.querySelectorAll<HTMLElement>('.card').forEach((card) => {
+    const okPlush =
+      active.plush === 'all' || card.dataset.plush === active.plush;
+    const okType = active.type === 'all' || card.dataset.type === active.type;
+    const show = okPlush && okType;
+    card.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+  if (emptyMsg) emptyMsg.style.display = visible === 0 ? 'block' : 'none';
+}
+
+buttons.forEach((btn) => {
+  btn.addEventListener('click', () => {
+    const group = btn.dataset.filter as 'plush' | 'type';
+    const value = btn.dataset.value;
+    if (!value) return;
+    active[group] = value;
+    // update pressed state within this group only
+    for (const b of document.querySelectorAll<HTMLButtonElement>(
+      `.filter-btn[data-filter="${group}"]`,
+    )) {
+      b.setAttribute('aria-pressed', String(b === btn));
+    }
+    apply();
+  });
+});
+</script>

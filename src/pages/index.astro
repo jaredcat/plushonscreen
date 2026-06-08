@@ -1,0 +1,47 @@
+---
+import { getCollection } from 'astro:content';
+import SightingCard from '../components/SightingCard.astro';
+import Base from '../layouts/Base.astro';
+
+const all = await getCollection('sightings');
+const sorted = all.sort(
+  (a, b) =>
+    (b.data.addedDate?.getTime() ?? 0) - (a.data.addedDate?.getTime() ?? 0),
+);
+const recent = sorted.slice(0, 6);
+const count = all.length;
+---
+
+<Base>
+  <section class="hero rise">
+    <h1>The <span class="snake">snake</span> is <em>everywhere</em>.</h1>
+    <p>
+      IKEA's Djungelorm plush keeps sneaking into movies, shows, and music
+      videos. We're cataloguing every appearance — timestamps, screenshots, and
+      all. Currently tracking
+      <span class="count">{count} sighting{count === 1 ? '' : 's'}</span>.
+    </p>
+    <p style="margin-top:1.5rem">
+      <a class="btn" href="/sightings">Browse all sightings</a>
+    </p>
+  </section>
+
+  {recent.length > 0 && (
+      <>
+        <h2 class="section-label">Latest sightings</h2>
+        <div class="grid">
+          {recent.map((s) => (
+            <SightingCard
+              slug={s.id}
+              title={s.data.title}
+              year={s.data.year}
+              mediaType={s.data.mediaType}
+              plush={s.data.plush}
+              confidence={s.data.confidence}
+              screenshot={s.data.screenshot}
+            />
+          ))}
+        </div>
+      </>
+    )}
+</Base>

@@ -23,33 +23,38 @@ export const DEFAULT_DESCRIPTION =
 
 export function sightingPageTitle(
   title: string,
-  year: number,
+  year: number | undefined,
   plush?: Plush,
 ): string {
   const plushLabel = plush?.name ?? 'IKEA Plush';
-  return `${title} (${year}) — ${plushLabel} Sighting`;
+  const yearLabel = year != null ? ` (${year})` : '';
+  return `${title}${yearLabel} — ${plushLabel} Sighting`;
 }
 
 export function sightingDescription(
   title: string,
-  year: number,
+  year: number | undefined,
   mediaType: string,
-  sceneDescription: string,
+  sceneDescription: string | undefined,
   plush?: Plush,
 ): string {
   const media = MEDIA_TYPE_LABEL[mediaType] ?? mediaType;
   const plushName = plush?.fullName ?? 'IKEA plush';
-  const scene = sceneDescription.replace(/\s+/g, ' ').trim();
-  const excerpt =
-    scene.length > 140 ? `${scene.slice(0, 137).trimEnd()}…` : scene;
-  return `The ${plushName} appears in ${title} (${year}), a ${media}. ${excerpt}`;
+  const yearLabel = year != null ? ` (${year})` : '';
+  const scene = sceneDescription?.replace(/\s+/g, ' ').trim();
+  const excerpt = scene
+    ? scene.length > 140
+      ? `${scene.slice(0, 137).trimEnd()}…`
+      : scene
+    : 'Details for this sighting are still being confirmed.';
+  return `The ${plushName} appears in ${title}${yearLabel}, a ${media}. ${excerpt}`;
 }
 
 export function sightingJsonLd(input: {
   title: string;
-  year: number;
+  year?: number;
   mediaType: string;
-  sceneDescription: string;
+  sceneDescription?: string;
   plush?: Plush;
   url: string;
   image?: string;
@@ -83,7 +88,7 @@ export function sightingJsonLd(input: {
     about: {
       '@type': mediaSchema,
       name: input.title,
-      datePublished: String(input.year),
+      ...(input.year != null && { datePublished: String(input.year) }),
     },
     keywords: [
       input.plush?.name,

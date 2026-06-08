@@ -2,6 +2,13 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
+  CONFIDENCE_LEVELS,
+  type Confidence,
+  isUnverified,
+  unverifiedCompletenessWarnings,
+} from '../src/lib/sighting-confidence.ts';
+import { validateSightingFilename } from '../src/lib/sighting-naming.ts';
+import {
   isValidSubmittedBy,
   normalizeUsername,
   SOCIAL_PLATFORMS,
@@ -13,6 +20,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const sightingsDir = join(root, 'src/content/sightings');
 const plushIds = new Set(plushes.map((p) => p.id));
 const validPlatforms = new Set<string>(SOCIAL_PLATFORMS);
+const validConfidence = new Set<string>(CONFIDENCE_LEVELS);
 
 const errors: string[] = [];
 const warnings: string[] = [];
@@ -95,6 +103,12 @@ function collectMarkdownFiles(dir: string): string[] {
   return files;
 }
 
+function parseOptionalInt(value: string | undefined): number | undefined {
+  if (!value) return undefined;
+  const parsed = Number.parseInt(value, 10);
+  return Number.isNaN(parsed) ? undefined : parsed;
+}
+
 const markdownFiles = collectMarkdownFiles(sightingsDir).filter(
   (filePath) => !filePath.split('/').pop()?.startsWith('example-'),
 );
@@ -127,6 +141,39 @@ for (const filePath of markdownFiles) {
     );
   }
 
+  const confidence = (frontmatter.confidence ?? 'likely') as Confidence;
+  if (!validConfidence.has(confidence)) {
+    errors.push(
+      `${relativePath}: confidence "${frontmatter.confidence}" is invalid (valid: ${CONFIDENCE_LEVELS.join(', ')})`,
+    );
+  }
+
+  const mediaType = frontmatter.mediaType;
+  if (!mediaType) {
+    errors.push(
+      `${relativePath}: missing required frontmatter field "mediaType"`,
+    );
+    continue;
+  }
+
+  if (!frontmatter.title) {
+    errors.push(`${relativePath}: missing required frontmatter field "title"`);
+  }
+
+  const season = parseOptionalInt(frontmatter.season);
+  const episode = parseOptionalInt(frontmatter.episode);
+
+  for (const warning of unverifiedCompletenessWarnings({
+    confidence,
+    mediaType,
+    year: parseOptionalInt(frontmatter.year),
+    sceneDescription: frontmatter.sceneDescription,
+    season,
+    episode,
+  })) {
+    warnings.push(`${relativePath}: ${warning}`);
+  }
+
   const screenshot = frontmatter.screenshot;
   if (screenshot) {
     const screenshotPath = resolve(dirname(filePath), screenshot);
@@ -135,6 +182,18 @@ for (const filePath of markdownFiles) {
         `${relativePath}: screenshot "${screenshot}" not found at ${screenshotPath.replace(`${root}/`, '')}`,
       );
     }
+  } else if (!isUnverified(confidence)) {
+    warnings.push(`${relativePath}: no screenshot (strongly recommended)`);
+  }
+
+  const basename = filePath.split('/').pop() ?? '';
+  const filenameError = validateSightingFilename(basename, mediaType, {
+    confidence,
+    season,
+    episode,
+  });
+  if (filenameError) {
+    errors.push(`${relativePath}: ${filenameError}`);
   }
 
   const submittedBy = parseSubmittedBy(content);

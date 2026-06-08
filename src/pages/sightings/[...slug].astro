@@ -8,6 +8,7 @@ import {
   sightingJsonLd,
   sightingPageTitle,
 } from '../../lib/seo';
+import { formatTvEpisodeLabel } from '../../lib/sighting-naming';
 import { plushById } from '../../plushes';
 
 export async function getStaticPaths() {
@@ -72,6 +73,11 @@ const typeLabel: Record<string, string> = {
   game: 'Video Game',
   other: 'Other',
 };
+
+const tvEpisode =
+  d.mediaType === 'tv' && d.season != null && d.episode != null
+    ? formatTvEpisodeLabel(d.season, d.episode)
+    : null;
 ---
 
 <Base
@@ -89,7 +95,11 @@ const typeLabel: Record<string, string> = {
     <span class="badge badge--type"
       >{typeLabel[d.mediaType] ?? d.mediaType}</span
     >
-    <span class="badge badge--type">{d.year}</span>
+    {d.year != null && <span class="badge badge--type">{d.year}</span>}
+    {tvEpisode && <span class="badge badge--type">{tvEpisode}</span>}
+    {d.episodeTitle && (
+      <span class="badge badge--type">{d.episodeTitle}</span>
+    )}
     <span class={`badge badge--${d.confidence}`}>{d.confidence}</span>
     {p && <span class="badge badge--type">{p.emoji} {p.name}</span>}
   </div>
@@ -115,10 +125,25 @@ const typeLabel: Record<string, string> = {
 
   <h2 class="section-label">The sighting</h2>
   <div class="prose">
-    <p>{d.sceneDescription}</p>
+    {d.sceneDescription ? (
+        <p>{d.sceneDescription}</p>
+      ) : (
+        <p style="color:var(--paper-dim)">
+          Scene details are still being confirmed for this unverified entry.
+        </p>
+      )}
   </div>
 
   <dl class="detail-grid">
+    {d.mediaType === 'tv' && d.season != null && d.episode != null && (
+      <div class="detail-row">
+        <dt>Episode</dt>
+        <dd>
+          {formatTvEpisodeLabel(d.season, d.episode)}
+          {d.episodeTitle ? ` — ${d.episodeTitle}` : ''}
+        </dd>
+      </div>
+    )}
     {d.timestamp && (
       <div class="detail-row"><dt>Timestamp</dt><dd>{d.timestamp}</dd></div>
     )}

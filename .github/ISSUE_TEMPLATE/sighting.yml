@@ -8,6 +8,7 @@ body:
       value: |
         Thanks for spotting a plush in the wild! Fill out what you can — the more detail the better.
         **A screenshot is the most valuable thing you can include.**
+        Missing details? Pick **unverified** under confidence — we can still track the sighting.
   - type: input
     id: title
     attributes:
@@ -20,9 +21,8 @@ body:
     id: year
     attributes:
       label: Year
+      description: Required unless confidence is unverified.
       placeholder: e.g. 2001
-    validations:
-      required: true
   - type: dropdown
     id: mediaType
     attributes:
@@ -35,6 +35,24 @@ body:
         - other
     validations:
       required: true
+  - type: input
+    id: season
+    attributes:
+      label: Season (TV only)
+      description: Required for TV unless confidence is unverified.
+      placeholder: e.g. 2
+  - type: input
+    id: episode
+    attributes:
+      label: Episode (TV only)
+      description: Required for TV unless confidence is unverified.
+      placeholder: e.g. 1
+  - type: input
+    id: episodeTitle
+    attributes:
+      label: Episode title (TV, optional)
+      description: Episode name if you know it (e.g. "The Odd Couples").
+      placeholder: e.g. The Odd Couples
   - type: dropdown
     id: plush
     attributes:
@@ -56,10 +74,8 @@ body:
     id: sceneDescription
     attributes:
       label: Scene description
-      description: What's happening? Who has the plush? How visible is it?
+      description: Required unless confidence is unverified.
       placeholder: In the background of the living room scene, sitting on the couch...
-    validations:
-      required: true
   - type: textarea
     id: screenshot
     attributes:
@@ -75,6 +91,7 @@ body:
     attributes:
       label: How sure are you?
       options:
+        - 'unverified — missing details, still gathering info'
         - 'likely — pretty confident'
         - 'verified — no doubt, it is definitely the plush'
         - 'disputed — could be something similar'

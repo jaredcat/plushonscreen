@@ -19,8 +19,9 @@ tags:
   - background
   - child-holds-it
 notes: >
-  This is a template entry showing every field. Delete it once you've added a
-  real sighting. The screenshot is a placeholder — swap in an actual still.
+  Template entry — files named example-* are not published. Copy and rename to
+  movie-{title-slug}.md (e.g. movie-saw-2004.md). Use confidence: unverified
+  while details are still incomplete.
 addedDate: 2024-01-15
 ---
 

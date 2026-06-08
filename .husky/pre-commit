@@ -3,6 +3,9 @@ staged=$(git diff --cached --name-only --diff-filter=ACMR)
 
 npx biome check --staged --write --no-errors-on-unmatched --files-ignore-unknown=true
 
+# Unverified sightings use relaxed rules (see src/lib/sighting-confidence.ts).
+node --experimental-strip-types scripts/validate-sightings.ts
+
 # Resize/compress staged sighting screenshots (high quality, smaller file size).
 node --experimental-strip-types scripts/optimize-images.ts
 

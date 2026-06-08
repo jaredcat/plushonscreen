@@ -5,7 +5,7 @@ import Base from '../../layouts/Base.astro';
 import { plushes } from '../../plushes';
 
 const all = await getCollection('sightings');
-const sorted = all.sort((a, b) => b.data.year - a.data.year);
+const sorted = all.sort((a, b) => (b.data.year ?? 0) - (a.data.year ?? 0));
 
 // Build filter option lists from the actual data so they never drift out of sync.
 const types = [...new Set(all.map((s) => s.data.mediaType))];
@@ -86,6 +86,8 @@ const typeLabel: Record<string, string> = {
             mediaType={s.data.mediaType}
             plush={s.data.plush}
             confidence={s.data.confidence}
+            season={s.data.season}
+            episode={s.data.episode}
             screenshot={s.data.screenshot}
           />
         ))}

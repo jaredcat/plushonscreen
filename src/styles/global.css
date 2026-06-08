@@ -179,6 +179,10 @@ img {
 .badge--disputed {
   color: var(--tomato);
 }
+.badge--unverified {
+  color: var(--paper-dim);
+  border-style: dashed;
+}
 .badge--type {
   color: var(--paper-dim);
   border-color: var(--ink-line);

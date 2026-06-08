@@ -1,19 +1,31 @@
 ---
 import { Image } from 'astro:assets';
+import { formatTvEpisodeLabel } from '../lib/sighting-naming';
 import { plushById } from '../plushes';
 
 interface Props {
   slug: string;
   title: string;
-  year: number;
+  year?: number;
   mediaType: string;
   plush: string;
   confidence: string;
+  season?: number;
+  episode?: number;
   screenshot?: ImageMetadata;
 }
 
-const { slug, title, year, mediaType, plush, confidence, screenshot } =
-  Astro.props;
+const {
+  slug,
+  title,
+  year,
+  mediaType,
+  plush,
+  confidence,
+  season,
+  episode,
+  screenshot,
+} = Astro.props;
 const p = plushById(plush);
 
 const typeLabel: Record<string, string> = {
@@ -23,6 +35,18 @@ const typeLabel: Record<string, string> = {
   game: 'Game',
   other: 'Other',
 };
+
+const tvEpisode =
+  mediaType === 'tv' && season != null && episode != null
+    ? formatTvEpisodeLabel(season, episode)
+    : null;
+
+const metaParts = [
+  year != null ? String(year) : null,
+  typeLabel[mediaType] ?? mediaType,
+  tvEpisode,
+].filter(Boolean);
+const metaLine = metaParts.join(' · ');
 ---
 
 <a
@@ -30,7 +54,8 @@ const typeLabel: Record<string, string> = {
   class="card"
   data-plush={plush}
   data-type={mediaType}
-  data-year={year}
+  data-year={year ?? ''}
+  data-confidence={confidence}
 >
   <div class="card-shot">
     {screenshot ? (
@@ -53,7 +78,7 @@ const typeLabel: Record<string, string> = {
   </div>
   <div class="card-body">
     <div class="card-title">{title}</div>
-    <div class="card-meta">{year} · {typeLabel[mediaType] ?? mediaType}</div>
+    {metaLine && <div class="card-meta">{metaLine}</div>}
     <div class="card-badges">
       <span class={`badge badge--${confidence}`}>{confidence}</span>
       {p && <span class="badge badge--type">{p.emoji} {p.name}</span>}

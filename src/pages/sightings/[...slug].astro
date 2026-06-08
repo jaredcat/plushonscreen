@@ -1,7 +1,12 @@
 ---
-import { Image } from 'astro:assets';
+import { getImage, Image } from 'astro:assets';
 import { getCollection, render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
+import {
+  sightingDescription,
+  sightingJsonLd,
+  sightingPageTitle,
+} from '../../lib/seo';
 import { plushById } from '../../plushes';
 
 export async function getStaticPaths() {
@@ -27,6 +32,38 @@ function youtubeEmbed(url?: string): string | null {
 }
 const embed = youtubeEmbed(d.clipUrl);
 
+const pageTitle = sightingPageTitle(d.title, d.year, p);
+const description = sightingDescription(
+  d.title,
+  d.year,
+  d.mediaType,
+  d.sceneDescription,
+  p,
+);
+const canonicalURL = new URL(Astro.url.pathname, Astro.site).href;
+
+let ogImage: string | undefined;
+if (d.screenshot) {
+  const optimized = await getImage({
+    src: d.screenshot,
+    width: 1200,
+    format: 'jpg',
+  });
+  ogImage = optimized.src;
+}
+
+const jsonLd = sightingJsonLd({
+  title: d.title,
+  year: d.year,
+  mediaType: d.mediaType,
+  sceneDescription: d.sceneDescription,
+  plush: p,
+  url: canonicalURL,
+  image: ogImage ? new URL(ogImage, Astro.site).href : undefined,
+  datePublished: d.addedDate?.toISOString(),
+  author: d.submittedBy,
+});
+
 const typeLabel: Record<string, string> = {
   movie: 'Movie',
   tv: 'TV Series',
@@ -36,7 +73,13 @@ const typeLabel: Record<string, string> = {
 };
 ---
 
-<Base title={`${d.title} (${d.year})`} description={d.sceneDescription}>
+<Base
+  title={pageTitle}
+  description={description}
+  ogImage={ogImage}
+  ogType="article"
+  jsonLd={jsonLd}
+>
   <p style="margin-top:1.5rem"><a href="/sightings">← All sightings</a></p>
 
   <h1 style="font-size:clamp(2rem,6vw,3.5rem);margin-top:0.5rem">{d.title}</h1>

@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import SightingCard from '../components/SightingCard.astro';
 import Base from '../layouts/Base.astro';
+import { DEFAULT_DESCRIPTION, websiteJsonLd } from '../lib/seo';
 
 const all = await getCollection('sightings');
 const sorted = all.sort(
@@ -12,7 +13,11 @@ const recent = sorted.slice(0, 6);
 const count = all.length;
 ---
 
-<Base>
+<Base
+  title="IKEA Plush Sightings in Movies & TV"
+  description={DEFAULT_DESCRIPTION}
+  jsonLd={websiteJsonLd()}
+>
   <section class="hero rise">
     <h1>The <span class="snake">snake</span> is <em>everywhere</em>.</h1>
     <p>

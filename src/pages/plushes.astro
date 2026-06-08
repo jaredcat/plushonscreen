@@ -7,7 +7,10 @@ const all = await getCollection('sightings');
 const countFor = (id: string) => all.filter((s) => s.data.plush === id).length;
 ---
 
-<Base title="The Cast" description="The IKEA plushes we track sightings for.">
+<Base
+  title="IKEA Plushes We Track"
+  description="Meet the IKEA plush toys we catalogue on screen — starting with the Djungelorm (DJUNGELSKOG snake) and growing from there."
+>
   <h1 style="font-size:clamp(2rem,6vw,3.5rem);margin-top:2rem">The Cast</h1>
   <p style="color:var(--paper-dim);max-width:55ch;margin-top:0.5rem">
     The plushes we're keeping an eye out for. Spotted one we don't track yet?

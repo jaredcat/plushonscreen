@@ -1,0 +1,114 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { plushById } from '../../plushes';
+
+export async function getStaticPaths() {
+  const all = await getCollection('sightings');
+  return all.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const d = entry.data;
+const p = plushById(d.plush);
+const { Content } = await render(entry);
+
+// Turn a YouTube watch/share URL into an embed URL. Returns null if it's not YouTube.
+function youtubeEmbed(url?: string): string | null {
+  if (!url) return null;
+  const m = url.match(
+    /(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([\w-]{11})/,
+  );
+  return m ? `https://www.youtube.com/embed/${m[1]}` : null;
+}
+const embed = youtubeEmbed(d.clipUrl);
+
+const typeLabel: Record<string, string> = {
+  movie: 'Movie',
+  tv: 'TV Series',
+  short: 'Short',
+  game: 'Video Game',
+  other: 'Other',
+};
+---
+
+<Base title={`${d.title} (${d.year})`} description={d.sceneDescription}>
+  <p style="margin-top:1.5rem"><a href="/sightings">← All sightings</a></p>
+
+  <h1 style="font-size:clamp(2rem,6vw,3.5rem);margin-top:0.5rem">{d.title}</h1>
+
+  <div class="detail-meta">
+    <span class="badge badge--type"
+      >{typeLabel[d.mediaType] ?? d.mediaType}</span
+    >
+    <span class="badge badge--type">{d.year}</span>
+    <span class={`badge badge--${d.confidence}`}>{d.confidence}</span>
+    {p && <span class="badge badge--type">{p.emoji} {p.name}</span>}
+  </div>
+
+  {d.screenshot && (
+      <div class="detail-shot">
+        <Image src={d.screenshot} alt={`${p?.name ?? 'Plush'} in ${d.title}`} width={1100} height={619} />
+      </div>
+    )}
+
+  <h2 class="section-label">The sighting</h2>
+  <div class="prose">
+    <p>{d.sceneDescription}</p>
+  </div>
+
+  <dl class="detail-grid">
+    {d.timestamp && (
+      <div class="detail-row"><dt>Timestamp</dt><dd>{d.timestamp}</dd></div>
+    )}
+    {p && (
+      <div class="detail-row"><dt>Plush</dt><dd><a href="/plushes">{p.emoji} {p.fullName}</a></dd></div>
+    )}
+    {d.tags.length > 0 && (
+      <div class="detail-row"><dt>Tags</dt><dd>{d.tags.join(', ')}</dd></div>
+    )}
+    {d.imdb && (
+      <div class="detail-row">
+        <dt>IMDb</dt>
+        <dd><a href={`https://www.imdb.com/title/${d.imdb}/`} rel="noopener">{d.imdb}</a></dd>
+      </div>
+    )}
+    {d.submittedBy && (
+      <div class="detail-row">
+        <dt>Spotted by</dt>
+        <dd><a href={`https://github.com/${d.submittedBy}`} rel="noopener">@{d.submittedBy}</a></dd>
+      </div>
+    )}
+  </dl>
+
+  {embed && (
+      <>
+        <h2 class="section-label">Clip</h2>
+        <div class="detail-shot" style="aspect-ratio:16/9">
+          <iframe
+            src={embed}
+            title="Clip"
+            width="100%"
+            height="100%"
+            style="border:0;aspect-ratio:16/9"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          />
+        </div>
+      </>
+    )}
+
+  {d.notes && (
+      <>
+        <h2 class="section-label">Notes</h2>
+        <div class="prose"><p>{d.notes}</p></div>
+      </>
+    )}
+
+  <!-- Free-form body content from the markdown file, if any -->
+  <div class="prose" style="margin-top:1.5rem"><Content /></div>
+</Base>

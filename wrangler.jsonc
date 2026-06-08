@@ -1,8 +1,15 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "plushonscreen",
+  "main": "worker/index.ts",
   "compatibility_date": "2026-06-08",
   "assets": {
-    "directory": "./dist"
+    "directory": "./dist",
+    "binding": "ASSETS"
+  },
+  "vars": {
+    "GITHUB_REPO_OWNER": "jaredcat",
+    "GITHUB_REPO_NAME": "plushonscreen",
+    "POW_DIFFICULTY": "4"
   }
 }

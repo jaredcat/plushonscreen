@@ -14,15 +14,18 @@
     "check": "biome check . && astro check && node --experimental-strip-types scripts/validate-sightings.ts",
     "optimize-images": "node --experimental-strip-types scripts/optimize-images.ts",
     "ci": "biome ci .",
-    "deploy": "npm run build && wrangler deploy"
+    "deploy": "npm run build && wrangler deploy",
+    "dev:worker": "npm run build && wrangler dev"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
-    "astro": "^6.4.4"
+    "astro": "^6.4.4",
+    "jose": "^6.2.3"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.9",
     "@biomejs/biome": "2.4.16",
+    "@cloudflare/workers-types": "^4.20260608.1",
     "@types/node": "^25.9.2",
     "husky": "9.1.7",
     "sharp": "^0.34.5",

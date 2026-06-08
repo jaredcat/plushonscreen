@@ -28,29 +28,21 @@ const repo = 'jaredcat/plushonscreen';
   <h2 class="section-label">Spotted one? Submit it</h2>
   <div class="prose" style="max-width:60ch">
     <p>
-      There are two ways to add a sighting, depending on how comfortable you are
-      with GitHub:
-    </p>
-    <p>
-      <strong>1. The easy way — fill out a form.</strong>
-      No coding needed. Just answer a few questions and we'll handle the rest.
+      Use the on-site form — no git required. We validate your entry, run a
+      quick anti-spam check, and open a pull request for review.
     </p>
     <p style="margin:1.25rem 0">
-      <a
-        class="btn"
-        href={`https://github.com/${repo}/issues/new?template=sighting.yml`}
-      >
-        Submit a sighting →
-      </a>
+      <a class="btn" href="/submit"> Submit a sighting → </a>
     </p>
     <p>
-      <strong>2. The direct way — open a pull request.</strong>
-      If you know your way around git, add a markdown file under
+      <strong>Prefer GitHub directly?</strong>
+      Open a pull request with a markdown file under
       <code>src/content/sightings/&lt;plush-id&gt;/</code>
-      with the screenshot in that folder's <code>images/</code> directory, and
-      open a PR. The schema in
-      <code>src/content.config.ts</code>
-      shows every field. This gets your sighting live the fastest.
+      and a screenshot in that folder's <code>images/</code> directory, or use
+      the
+      <a href={`https://github.com/${repo}/issues/new?template=sighting.yml`}>
+        GitHub issue form
+      </a>.
     </p>
   </div>
 

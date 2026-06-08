@@ -1,0 +1,264 @@
+---
+import Base from '../layouts/Base.astro';
+import { PLATFORM_LABELS, SOCIAL_PLATFORMS } from '../lib/social';
+import { CONFIDENCE_LEVELS, MEDIA_TYPES } from '../lib/submission';
+import { plushes } from '../plushes';
+
+const confidenceLabels: Record<(typeof CONFIDENCE_LEVELS)[number], string> = {
+  likely: 'Likely — pretty confident',
+  verified: 'Verified — no doubt, it is definitely the plush',
+  disputed: 'Disputed — could be something similar',
+};
+---
+
+<Base
+  title="Submit a Sighting"
+  description="Spotted an IKEA plush in a movie, show, or video? Submit it here and we'll open a pull request for review."
+>
+  <h1 style="font-size:clamp(2rem,6vw,3.5rem);margin-top:2rem">
+    Submit a sighting
+  </h1>
+
+  <div class="prose" style="max-width:60ch;margin-top:1rem">
+    <p>
+      Fill out the form below with as much detail as you can — especially a
+      clear screenshot. When you submit, we open a pull request on GitHub so
+      maintainers can review it before it goes live.
+    </p>
+    <p style="color:var(--paper-dim);font-size:0.9rem">
+      A quick proof-of-work check runs in your browser before upload to keep
+      spam out. It usually takes a couple of seconds.
+    </p>
+  </div>
+
+  <form
+    id="sighting-form"
+    class="submit-form rise"
+    enctype="multipart/form-data"
+  >
+    <div class="form-grid">
+      <label class="form-field">
+        <span>Title</span>
+        <input name="title" required maxlength="120" placeholder="e.g. Shrek">
+      </label>
+
+      <label class="form-field">
+        <span>Year</span>
+        <input
+          name="year"
+          required
+          inputmode="numeric"
+          pattern="[0-9]{4}"
+          placeholder="e.g. 2001"
+        >
+      </label>
+
+      <label class="form-field">
+        <span>Type</span>
+        <select name="mediaType" required>
+          {MEDIA_TYPES.map((type) => (
+            <option value={type}>{type}</option>
+          ))}
+        </select>
+      </label>
+
+      <label class="form-field">
+        <span>Which plush?</span>
+        <select name="plush" required>
+          {plushes.map((plush) => (
+            <option value={plush.id}>
+              {plush.emoji} {plush.name}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <label class="form-field">
+        <span>Timestamp (optional)</span>
+        <input name="timestamp" maxlength="32" placeholder="e.g. 1:04:32">
+      </label>
+
+      <label class="form-field">
+        <span>Confidence</span>
+        <select name="confidence" required>
+          {CONFIDENCE_LEVELS.map((level) => (
+            <option value={level}>{confidenceLabels[level]}</option>
+          ))}
+        </select>
+      </label>
+    </div>
+
+    <label class="form-field">
+      <span>Scene description</span>
+      <textarea
+        name="sceneDescription"
+        required
+        maxlength="4000"
+        rows="5"
+        placeholder="What's happening? Who has the plush? How visible is it?"
+      ></textarea>
+    </label>
+
+    <label class="form-field">
+      <span>Screenshot</span>
+      <input
+        name="screenshot"
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        required
+      >
+      <img id="screenshot-preview" class="screenshot-preview" alt="" hidden>
+    </label>
+
+    <label class="form-field">
+      <span>Clip link (optional)</span>
+      <input
+        name="clipUrl"
+        type="url"
+        maxlength="2048"
+        placeholder="YouTube link to the moment, if one exists"
+      >
+    </label>
+
+    <div class="form-grid">
+      <label class="form-field">
+        <span>Credit — platform</span>
+        <select name="creditPlatform">
+          <option value="">No credit</option>
+          {SOCIAL_PLATFORMS.map((platform) => (
+            <option value={platform}>{PLATFORM_LABELS[platform]}</option>
+          ))}
+        </select>
+      </label>
+
+      <label class="form-field">
+        <span>Credit — username</span>
+        <input
+          name="creditUsername"
+          maxlength="50"
+          placeholder="your-handle or display name"
+        >
+      </label>
+    </div>
+
+    <p id="pow-status" class="submit-meta">Ready when you are.</p>
+    <p id="submit-status" class="submit-meta" data-tone="neutral"></p>
+
+    <button id="submit-button" class="btn" type="submit">
+      Submit sighting →
+    </button>
+  </form>
+
+  <div id="submit-success" class="submit-success rise" hidden>
+    <h2 class="section-label">Thanks!</h2>
+    <p>
+      Your sighting is in a pull request waiting for review. Once it's merged,
+      it will show up on the site.
+    </p>
+    <p style="margin-top:1rem">
+      <a
+        id="pull-request-link"
+        class="btn"
+        href="#"
+        target="_blank"
+        rel="noopener"
+      >
+        View pull request
+      </a>
+    </p>
+  </div>
+
+  <h2 class="section-label">Prefer GitHub directly?</h2>
+  <div class="prose" style="max-width:60ch">
+    <p>
+      You can still open a pull request or use the
+      <a
+        href="https://github.com/jaredcat/plushonscreen/issues/new?template=sighting.yml"
+      >
+        GitHub issue form
+      </a>
+      if you'd rather contribute that way.
+    </p>
+  </div>
+</Base>
+
+<style>
+.submit-form {
+  margin-top: 2rem;
+  display: grid;
+  gap: 1.25rem;
+  max-width: 720px;
+}
+
+.form-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.form-field {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.form-field span {
+  color: var(--paper-dim);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+  background: var(--ink-soft);
+  border: 1px solid var(--ink-line);
+  border-radius: var(--radius);
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 0.95rem;
+  padding: 0.75rem 0.85rem;
+  width: 100%;
+}
+
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+  border-color: var(--green);
+  outline: none;
+}
+
+.screenshot-preview {
+  border: 1px solid var(--ink-line);
+  border-radius: var(--radius);
+  margin-top: 0.75rem;
+  max-height: 280px;
+  object-fit: contain;
+  width: 100%;
+}
+
+.submit-meta {
+  color: var(--paper-dim);
+  font-size: 0.85rem;
+  min-height: 1.25rem;
+}
+
+.submit-meta[data-tone="error"] {
+  color: var(--tomato);
+}
+
+.submit-meta[data-tone="success"] {
+  color: var(--green-bright);
+}
+
+.submit-success {
+  margin-top: 2rem;
+  max-width: 60ch;
+}
+</style>
+
+<script>
+import { initSubmitForm } from '../scripts/submit-form';
+
+initSubmitForm();
+</script>

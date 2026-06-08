@@ -4,6 +4,10 @@ Thanks for helping document IKEA plush sightings on screen!
 
 ## Ways to contribute
 
+### Submit a sighting (web form)
+
+Use [plushonscreen.com/submit](https://plushonscreen.com/submit) (or `/submit` locally via `npm run dev:worker` after configuring secrets). The form validates your entry, runs a browser proof-of-work check, and opens a pull request on the repo.
+
 ### Submit a sighting (PR)
 
 1. Copy [`src/content/sightings/djungelorm/example-movie-2026.md`](src/content/sightings/djungelorm/example-movie-2026.md) into the folder for your plush (e.g. `src/content/sightings/djungelorm/`) and **rename it** (files named `example-*` are templates and are not published).
@@ -21,11 +25,40 @@ Use the [sighting issue form](.github/ISSUE_TEMPLATE/sighting.yml). Maintainers 
 2. Create `src/content/sightings/<plush-id>/` and `src/content/sightings/<plush-id>/images/` for that plush's sightings.
 3. Add the new option to [`.github/ISSUE_TEMPLATE/sighting.yml`](.github/ISSUE_TEMPLATE/sighting.yml).
 
+## Submission API setup (maintainers)
+
+The `/submit` page posts to a Cloudflare Worker (`worker/index.ts`) that opens PRs via a GitHub App.
+
+1. Create a GitHub App with **Contents** and **Pull requests** read/write permission. Install it on `jaredcat/plushonscreen`.
+2. Note the **App ID** and **Installation ID** (from the installation URL or API).
+3. Generate a private key and download the `.pem` file.
+4. Set Worker secrets (production):
+
+```sh
+npx wrangler secret put POW_SECRET
+npx wrangler secret put GITHUB_APP_ID
+npx wrangler secret put GITHUB_INSTALLATION_ID
+npx wrangler secret put GITHUB_APP_PRIVATE_KEY
+```
+
+Paste the full PEM for `GITHUB_APP_PRIVATE_KEY` (Wrangler accepts multiline secrets). For local dev, copy `.dev.vars.example` to `.dev.vars`.
+
+Optional: adjust `POW_DIFFICULTY` in `wrangler.jsonc` (4 hex leading zeros by default; higher = slower client check).
+
+Test the full stack locally:
+
+```sh
+npm run dev:worker
+```
+
+Then open `http://localhost:8787/submit`.
+
 ## Local development
 
 ```sh
 npm install
-npm run dev       # http://localhost:4321
+npm run dev       # http://localhost:4321 (static site only; /submit API needs dev:worker)
+npm run dev:worker # build + wrangler dev at http://localhost:8787
 npm run build     # outputs to dist/
 npm run preview   # serve the built site locally
 ```

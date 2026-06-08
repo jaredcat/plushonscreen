@@ -1,0 +1,5 @@
+# Copy to `.dev.vars` for local wrangler dev. Never commit real secrets.
+POW_SECRET=dev-only-change-me
+GITHUB_APP_ID=
+GITHUB_INSTALLATION_ID=
+GITHUB_APP_PRIVATE_KEY=

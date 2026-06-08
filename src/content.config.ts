@@ -1,6 +1,7 @@
 import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
+import { SOCIAL_PLATFORMS } from './lib/social';
 
 // A "sighting" is one appearance of one plush in one piece of media.
 // The schema is the single source of truth for what we track — if a field
@@ -27,7 +28,12 @@ const sightings = defineCollection({
       screenshot: image().optional(),
       timestamp: z.string().optional(), // "1:04:32"
       confidence: z.enum(['verified', 'likely', 'disputed']).default('likely'),
-      submittedBy: z.string().optional(), // GitHub username for credit
+      submittedBy: z
+        .object({
+          platform: z.enum(SOCIAL_PLATFORMS),
+          username: z.string(),
+        })
+        .optional(),
 
       // --- Nice to have ---
       imdb: z.string().optional(), // imdb id like "tt0126029"

@@ -80,9 +80,25 @@ body:
         - 'disputed — could be something similar'
     validations:
       required: true
-  - type: input
-    id: submittedBy
+  - type: dropdown
+    id: creditPlatform
     attributes:
-      label: Credit
-      description: Your GitHub username, if you'd like a credit on the entry.
+      label: Credit — social platform
+      description: Where should we link your profile? Pick "none" for name only (no link).
+      options:
+        - github
+        - instagram
+        - tiktok
+        - bluesky
+        - youtube
+        - twitch
+        - reddit
+        - pinterest
+        - threads
+        - none
+  - type: input
+    id: creditUsername
+    attributes:
+      label: Credit — username
+      description: Your handle on that platform (without the @). For "none", enter the name you'd like shown.
       placeholder: your-username

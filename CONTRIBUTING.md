@@ -52,7 +52,13 @@ npm run lint:fix  # auto-fix safe issues
 npm run format    # format all files
 ```
 
-Git hooks run Biome on staged files before each commit. You can skip hooks in a pinch with `git commit --no-verify`, but CI will still enforce the checks.
+Git hooks run Biome on staged files and lightly optimize staged sighting screenshots (resize to a 1920px max edge, high-quality compression) before each commit. JPEG is preferred for photo stills — PNG is fine but compresses less. You can skip hooks in a pinch with `git commit --no-verify`, but CI will still enforce the checks.
+
+To optimize images manually:
+
+```sh
+npm run optimize-images -- path/to/image.png
+```
 
 ## Fixing Biome failures
 
@@ -65,6 +71,18 @@ If Biome reports issues it cannot auto-fix, read the error message and adjust th
 ## Content schema
 
 Every sighting is validated against the Zod schema in [`src/content.config.ts`](src/content.config.ts). Required fields: `title`, `year`, `mediaType`, `plush`, `sceneDescription`. A malformed entry fails `npm run build`.
+
+### Contributor credit (`submittedBy`)
+
+Optional credit for who spotted the plush. Use a platform + username — the site builds profile links from fixed templates (no raw URLs in frontmatter):
+
+```yaml
+submittedBy:
+  platform: youtube   # github, instagram, tiktok, bluesky, youtube, twitch, reddit, pinterest, threads, or none
+  username: your-handle
+```
+
+Pick `none` for a display name with no link.
 
 ## CI
 

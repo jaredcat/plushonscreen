@@ -1,0 +1,50 @@
+---
+import { Image } from 'astro:assets';
+import { plushById } from '../plushes';
+
+interface Props {
+  slug: string;
+  title: string;
+  year: number;
+  mediaType: string;
+  plush: string;
+  confidence: string;
+  screenshot?: ImageMetadata;
+}
+
+const { slug, title, year, mediaType, plush, confidence, screenshot } =
+  Astro.props;
+const p = plushById(plush);
+
+const typeLabel: Record<string, string> = {
+  movie: 'Movie',
+  tv: 'TV',
+  short: 'Short',
+  game: 'Game',
+  other: 'Other',
+};
+---
+
+<a
+  href={`/sightings/${slug}`}
+  class="card"
+  data-plush={plush}
+  data-type={mediaType}
+  data-year={year}
+>
+  <div class="card-shot">
+    {screenshot ? (
+        <Image src={screenshot} alt={`${p?.name ?? 'Plush'} in ${title}`} width={520} height={293} />
+      ) : (
+        <span class="placeholder">{p?.emoji ?? '🎬'}</span>
+      )}
+  </div>
+  <div class="card-body">
+    <div class="card-title">{title}</div>
+    <div class="card-meta">{year} · {typeLabel[mediaType] ?? mediaType}</div>
+    <div class="card-badges">
+      <span class={`badge badge--${confidence}`}>{confidence}</span>
+      {p && <span class="badge badge--type">{p.emoji} {p.name}</span>}
+    </div>
+  </div>
+</a>

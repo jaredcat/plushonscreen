@@ -18,10 +18,13 @@ const NON_TV_FILENAME = new RegExp(
   `^(?<mediaType>movie|short|game|other)-(?<workSlug>${WORK_SLUG})\\.md$`,
 );
 
-/** TV: `{work-slug}.md` with optional `-s{season}e{episode}` (suffix required unless unverified) */
-const TV_FILENAME = new RegExp(
-  `^tv-(?<workSlug>${WORK_SLUG})(?<tvSuffix>${TV_SUFFIX})?\\.md$`,
+/** TV with episode suffix: `tv-{work-slug}-s{season}e{episode}.md` */
+const TV_FILENAME_WITH_SUFFIX = new RegExp(
+  `^tv-(?<workSlug>${WORK_SLUG})${TV_SUFFIX}\\.md$`,
 );
+
+/** TV without episode suffix (unverified / S&E unknown): `tv-{work-slug}.md` */
+const TV_FILENAME_LOOSE = new RegExp(`^tv-(?<workSlug>${WORK_SLUG})\\.md$`);
 
 export interface ParsedSightingFilename {
   mediaType: SightingMediaType;
@@ -63,16 +66,21 @@ export function formatSightingFilename(
 export function parseSightingFilename(
   basename: string,
 ): ParsedSightingFilename | null {
-  const tvMatch = basename.match(TV_FILENAME);
-  if (tvMatch?.groups) {
-    const tvSuffix = tvMatch.groups.tvSuffix;
-    const seasonMatch = tvSuffix?.match(/-s(\d+)e(\d+)/);
-
+  const tvWithSuffix = basename.match(TV_FILENAME_WITH_SUFFIX);
+  if (tvWithSuffix?.groups) {
     return {
       mediaType: 'tv',
-      workSlug: tvMatch.groups.workSlug,
-      season: seasonMatch ? Number(seasonMatch[1]) : undefined,
-      episode: seasonMatch ? Number(seasonMatch[2]) : undefined,
+      workSlug: tvWithSuffix.groups.workSlug,
+      season: Number(tvWithSuffix.groups.season),
+      episode: Number(tvWithSuffix.groups.episode),
+    };
+  }
+
+  const tvLoose = basename.match(TV_FILENAME_LOOSE);
+  if (tvLoose?.groups) {
+    return {
+      mediaType: 'tv',
+      workSlug: tvLoose.groups.workSlug,
     };
   }
 

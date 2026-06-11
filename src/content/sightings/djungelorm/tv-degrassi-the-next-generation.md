@@ -1,6 +1,7 @@
 ---
 title: 'Degrassi: The Next Generation'
 mediaType: tv
+year: 2001
 plush: djungelorm
 confidence: unverified
 imdb: 'tt0288937'

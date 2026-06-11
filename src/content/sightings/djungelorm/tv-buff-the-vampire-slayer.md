@@ -1,6 +1,7 @@
 ---
 title: 'Buffy the Vampire Slayer'
 mediaType: tv
+year: 1992
 plush: djungelorm
 confidence: unverified
 imdb: 'tt0118276'

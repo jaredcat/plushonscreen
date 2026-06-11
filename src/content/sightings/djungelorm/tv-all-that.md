@@ -1,6 +1,7 @@
 ---
 title: 'All That'
 mediaType: tv
+year: 1994
 plush: djungelorm
 confidence: unverified
 imdb: 'tt0111875'

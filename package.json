@@ -18,15 +18,19 @@
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
-    "astro": "^6.4.4"
+    "astro": "^6.4.6"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.9",
-    "@biomejs/biome": "2.4.16",
-    "@types/node": "^25.9.2",
+    "@biomejs/biome": "2.5.0",
+    "@types/node": "^25.9.3",
     "husky": "9.1.7",
-    "sharp": "^0.34.5",
+    "node-addon-api": "^8.8.0",
+    "sharp": "^0.35.1",
     "typescript": "6.0.3",
-    "wrangler": "^4.98.0"
+    "wrangler": "^4.100.0"
+  },
+  "overrides": {
+    "sharp": "^0.35.1"
   }
 }

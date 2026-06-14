@@ -87,7 +87,7 @@ const tvEpisode =
   ogType="article"
   jsonLd={jsonLd}
 >
-  <p style="margin-top:1.5rem"><a href="/sightings">← All sightings</a></p>
+  <p style="margin-top:1.5rem"><a href="/sightings/">← All sightings</a></p>
 
   <h1 style="font-size:clamp(2rem,6vw,3.5rem);margin-top:0.5rem">{d.title}</h1>
 
@@ -148,7 +148,7 @@ const tvEpisode =
       <div class="detail-row"><dt>Timestamp</dt><dd>{d.timestamp}</dd></div>
     )}
     {p && (
-      <div class="detail-row"><dt>Plush</dt><dd><a href="/plushes">{p.emoji} {p.fullName}</a></dd></div>
+      <div class="detail-row"><dt>Plush</dt><dd><a href="/plushes/">{p.emoji} {p.fullName}</a></dd></div>
     )}
     {d.tags.length > 0 && (
       <div class="detail-row"><dt>Tags</dt><dd>{d.tags.join(', ')}</dd></div>

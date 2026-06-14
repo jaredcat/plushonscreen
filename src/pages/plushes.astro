@@ -14,7 +14,7 @@ const countFor = (id: string) => all.filter((s) => s.data.plush === id).length;
   <h1 style="font-size:clamp(2rem,6vw,3.5rem);margin-top:2rem">The Cast</h1>
   <p style="color:var(--paper-dim);max-width:55ch;margin-top:0.5rem">
     The plushes we're keeping an eye out for. Spotted one we don't track yet?
-    <a href="/about">Let us know.</a>
+    <a href="/about/">Let us know.</a>
   </p>
 
   <div class="detail-grid" style="margin-top:2rem">
@@ -32,7 +32,7 @@ const countFor = (id: string) => all.filter((s) => s.data.plush === id).length;
             <p style="margin-top:0.4rem;font-size:0.9rem">{p.blurb}</p>
           </div>
           <div style="text-align:right">
-            <a href={`/sightings`} style={`color:${p.color};font-weight:700`}>
+            <a href="/sightings/" style={`color:${p.color};font-weight:700`}>
               {countFor(p.id)} sighting{countFor(p.id) === 1 ? '' : 's'}
             </a>
           </div>

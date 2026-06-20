@@ -28,7 +28,7 @@
     "node-addon-api": "^8.8.0",
     "sharp": "^0.35.1",
     "typescript": "6.0.3",
-    "wrangler": "^4.100.0"
+    "wrangler": "^4.103.0"
   },
   "overrides": {
     "sharp": "^0.35.1"

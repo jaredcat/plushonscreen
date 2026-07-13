@@ -22,12 +22,12 @@
   },
   "devDependencies": {
     "@astrojs/check": "0.9.9",
-    "@biomejs/biome": "2.5.0",
+    "@biomejs/biome": "2.5.3",
     "@types/node": "^25.9.3",
     "husky": "9.1.7",
     "node-addon-api": "^8.8.0",
     "sharp": "^0.35.1",
-    "typescript": "6.0.3",
+    "typescript": "7.0.2",
     "wrangler": "^4.100.0"
   },
   "overrides": {
